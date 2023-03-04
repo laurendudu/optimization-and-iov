@@ -1,13 +1,13 @@
 import math
 
 
-def get_closest_rsu(rsu_list, object):
+def get_closest_rsu(rsu_list, object, exlude_list):
     min_distance = math.inf
     min_rsu = None
 
     for rsu in rsu_list:
         distance = math.sqrt((rsu.X - object.X) ** 2 + (rsu.Y - object.Y) ** 2)
-        if distance < min_distance and distance != 0:
+        if distance < min_distance and rsu not in exlude_list:
             min_distance = distance
             min_rsu = rsu
 
@@ -36,7 +36,7 @@ def computation_time(task_length: int, vm_nb: int, vm_cpu: int) -> float:
         vm_cpu (int): CPU capacity of a VM in MIPS.
 
     """
-    return task_length / (vm_nb * vm_cpu)
+    return math.ceil(task_length / (vm_nb * vm_cpu))
 
 
 def migration_time(file_size: int, distance: float, dtr: int) -> float:
@@ -51,7 +51,7 @@ def migration_time(file_size: int, distance: float, dtr: int) -> float:
         float: migration of the task in seconds.
     """
 
-    return (file_size / dtr) * distance
+    return math.ceil((file_size / dtr) * distance)
 
 
 def data_transfer_time(file_size: int, dtr: int) -> float:
@@ -64,7 +64,7 @@ def data_transfer_time(file_size: int, dtr: int) -> float:
     Returns:
         float: data transfer time of the task in seconds.
     """
-    return file_size / dtr
+    return math.ceil(file_size / dtr)
 
 
 def distance(object_1, object_2):

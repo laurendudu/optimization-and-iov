@@ -51,6 +51,7 @@ class Task:
         self.MIGRATION_HISTORY = 0
         self.COMPUTATION_HISTORY = 0
         self.MIGRATION_TIME = 0
+        self.RSU_HISTORY = []
 
 
 def populate_tasks(data: pd.DataFrame) -> list:
