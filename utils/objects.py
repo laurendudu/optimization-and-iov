@@ -140,3 +140,24 @@ def get_network(rsu: list, es: list) -> dict:
     np.random.shuffle(rsu_list)
 
     return rsu_list
+
+
+def get_full_network(rsu: list, es: list) -> dict:
+
+    # shuffle the RSU list and the ES list
+    np.random.shuffle(rsu)
+    np.random.shuffle(es)
+
+    # for each es, choose an rsu to connect to
+    for i, es in enumerate(es):
+        rsu[i].ES = es
+
+    # for each rsu, if ES is None, set it to 'AP'
+    for rsu in rsu:
+        if rsu.ES is None:
+            rsu.ES = "AP"
+
+    # shuffle the RSU list again
+    np.random.shuffle(rsu)
+
+    return rsu
