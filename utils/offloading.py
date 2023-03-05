@@ -1,6 +1,6 @@
 import numpy as np
 
-from main import (
+from .main import (
     get_closest_rsu,
     is_server_free,
     compatible,
@@ -108,3 +108,5 @@ def task_offloading(
 
         # update the current time
         current_time += 1
+
+    return tasks_bank
