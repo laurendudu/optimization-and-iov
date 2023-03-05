@@ -22,11 +22,10 @@ class Individual(object):
         # compute the fitness
         self.fitness = fitness(network)
 
-        self.rank = None
         self.__class__.global_individual.append(self)
         self.ID = len(self.__class__.global_individual)
-        self.domination_list = []
         self.crowding_distance = None
+        self.rank = None
 
     def __str__(self) -> str:
         """Returns a string representation of the individual.
@@ -252,52 +251,58 @@ def non_dominated_sorting(population):
     Returns:
         list: list of individuals.
     """
-    # reset the ranks and domination lists of the individuals
+    # initialize the fronts
+    fronts = []
+
+    # initialize the first front
+    front_1 = []
+
+    # for each individual in the population
     for individual in population:
-        individual.rank = None
-        individual.domination_list = []
+        # initialize the number of individuals that dominate the individual
+        individual.number_of_dominating_individuals = 0
+        # initialize the list of individuals that are dominated by the individual
+        individual.dominated_individuals = []
 
-    # Initialize the fronts
-    fronts = [[]]
-    # Initialize the number of individuals that dominate each individual
-    domination_count = [0] * len(population)
+        # for each individual in the population
+        for other_individual in population:
+            # if the individual dominates the other individual
+            if individual.dominates(other_individual):
+                # add the other individual to the list of individuals that are dominated by the individual
+                individual.dominated_individuals.append(other_individual)
+            # if the other individual dominates the individual
+            elif other_individual.dominates(individual):
+                # increase the number of individuals that dominate the individual
+                individual.number_of_dominating_individuals += 1
 
-    for i, individual_1 in enumerate(population):
-        for j, individual_2 in enumerate(population):
-            # if individual_1 dominates individual_2
-            if individual_1.dominates(individual_2):
-                # add individual_2 to the domination list of individual_1
-                individual_1.domination_list.append(individual_2)
-            # if individual_2 dominates individual_1
-            elif individual_2.dominates(individual_1):
-                # increase the domination count of individual_2
-                domination_count[j] += 1
+        # if the individual is not dominated by any other individual
+        if individual.number_of_dominating_individuals == 0:
+            # add the individual to the first front
+            front_1.append(individual)
 
-        # if individual_1 is not dominated by any other individual
-        if domination_count[i] == 0:
-            # add individual_1 to the first front
-            fronts[0].append(individual_1)
-            # set the rank of individual_1 to 1
-            individual_1.rank = 1
+    # add the first front to the list of fronts
+    fronts.append(front_1)
 
-    # Calculate the rank of each individual
-    i = 0
-    while fronts[i]:
-        next_front = []
+    # for each front
+    for front in fronts:
+        # for each individual in the front
+        for individual in front:
+            # for each individual that is dominated by the individual
+            for dominated_individual in individual.dominated_individuals:
+                # decrease the number of individuals that dominate the dominated individual
+                dominated_individual.number_of_dominating_individuals -= 1
+
+                # if the dominated individual is not dominated by any other individual
+                if dominated_individual.number_of_dominating_individuals == 0:
+                    # add the dominated individual to the next front
+                    fronts.append([dominated_individual])
+
+    # update the ranks of the individuals
+    for i in range(len(fronts)):
         for individual in fronts[i]:
-            for dominated_individual in individual.domination_list:
-                # decrease the domination count of dominated_individual
-                domination_count[population.index(dominated_individual)] -= 1
-                # if dominated_individual is not dominated by any other individual
-                if domination_count[population.index(dominated_individual)] == 0:
-                    # add dominated_individual to the next front
-                    next_front.append(dominated_individual)
-                    # set the rank of dominated_individual to i + 2
-                    dominated_individual.rank = i + 2
-        i += 1
-        fronts.append(next_front)
+            individual.rank = i + 1
 
-    return fronts[:-1]
+    return fronts
 
 
 def crowding_distance(fronts):
@@ -328,6 +333,11 @@ def crowding_distance(fronts):
 
             # calculate the crowding distance of the other individuals
             for i in range(1, len(front) - 1):
+                # if the fitness of the first and last individual is the same, set the crowding distance to 0 for all individuals in the front
+                if front[0].fitness[objective] == front[-1].fitness[objective]:
+                    for individual in front:
+                        individual.crowding_distance = 0
+                    break
                 front[i].crowding_distance += (
                     front[i + 1].fitness[objective] - front[i - 1].fitness[objective]
                 ) / (front[-1].fitness[objective] - front[0].fitness[objective])
@@ -350,7 +360,10 @@ def tournament_selection(population, tournament_size):
 
     best_individual = tournament[0]
 
-    tournament = crowding_distance(tournament)
+    tournament = crowding_distance([tournament])
+
+    # flattent the list of lists
+    tournament = [individual for front in tournament for individual in front]
 
     # find the best individual in the tournament
     for individual in tournament:

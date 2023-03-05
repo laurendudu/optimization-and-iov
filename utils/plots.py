@@ -55,3 +55,25 @@ def plot_rsu_ids(network: pd.DataFrame, ids: list) -> plt.show():
             ax.annotate(txt, (network["RSU_X"][i], network["RSU_Y"][i]))
 
     return plt.show()
+
+
+def plot_pareto(population):
+    # make the plot bigger
+    plt.figure(figsize=(5, 5))
+
+    # plot the fitness values of the final population
+    # change the color for each rank value
+    for individual in population:
+        if individual.rank != 1:
+            plt.scatter(individual.fitness[0], individual.fitness[1], color="red")
+
+    for individual in population:
+        if individual.rank == 1:
+            plt.scatter(individual.fitness[0], individual.fitness[1], color="green")
+
+    # label the axes
+    plt.xlabel("Max Computation Time")
+    plt.ylabel("Max Migration Time")
+
+    # show the plot
+    return plt.show()
