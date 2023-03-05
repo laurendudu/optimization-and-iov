@@ -151,10 +151,19 @@ def get_network(rsu: list, es: list) -> dict:
     return rsu_list
 
 
-def get_full_network(rsu_list: list, es_list: list) -> dict:
+def get_random_network(rsu_list: list, es_list: list) -> dict:
     # shuffle the RSU list and the ES list
     np.random.shuffle(rsu_list)
     np.random.shuffle(es_list)
+
+    # for each RSU, generate random coordinates
+    for rsu in rsu_list:
+        rsu.X = np.random.randint(0, 100)
+        rsu.Y = np.random.randint(0, 100)
+
+    # reset the ES of the RSUs
+    for rsu in rsu_list:
+        rsu.ES = None
 
     # for each es, choose an rsu to connect to
     for i, es in enumerate(es_list):
