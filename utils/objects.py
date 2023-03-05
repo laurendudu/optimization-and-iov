@@ -3,6 +3,8 @@ import numpy as np
 
 
 class RSU:
+    """Represents an RSU."""
+
     global_rsu = []
 
     def __init__(
@@ -23,6 +25,8 @@ class RSU:
 
 
 class ES:
+    """Represents an ES."""
+
     global_es = []
 
     def __init__(
@@ -38,6 +42,8 @@ class ES:
 
 
 class Task:
+    """Represents a task."""
+
     global_task = []
 
     def __init__(
@@ -121,7 +127,16 @@ def populate_ess(data: pd.DataFrame) -> list:
     return ess
 
 
-def get_network(rsu: list, es: list) -> dict:
+def get_network(rsu: list, es: list) -> list:
+    """Generates a network of RSUs and ESs from the RSU and ES lists.
+
+    Args:
+        rsu (list): list of RSUs.
+        es (list): list of ESs.
+
+    Returns:
+        list: list of RSUs with ESs assigned to them.
+    """
     # choose a random number of RSUs M
     M = np.random.randint(2, len(rsu))
     # choose a random number of ESs W, with W < M
@@ -151,7 +166,16 @@ def get_network(rsu: list, es: list) -> dict:
     return rsu_list
 
 
-def get_random_network(rsu_list: list, es_list: list) -> dict:
+def get_random_network(rsu_list: list, es_list: list) -> list:
+    """Generates a random network of RSUs and ESs from the RSU and ES lists.
+
+    Args:
+        rsu_list (list): list of RSUs.
+        es_list (list): list of ESs.
+
+    Returns:
+        list: list of RSUs with ESs assigned to them, all of them with random coordinates.
+    """
     # shuffle the RSU list and the ES list
     np.random.shuffle(rsu_list)
     np.random.shuffle(es_list)

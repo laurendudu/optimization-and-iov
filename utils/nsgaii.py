@@ -10,6 +10,12 @@ class Individual(object):
     Attributes:
         chromosome (list): chromosome of the individual.
         fitness (list): fitness of the individual.
+        ID (int): ID of the individual.
+        crowding_distance (float): crowding distance of the individual.
+        rank (int): rank of the individual.
+
+    Methods:
+        dominates: checks if the individual dominates another individual.
     """
 
     global_individual = []
@@ -59,6 +65,14 @@ class Individual(object):
 
 
 def network_to_chromosome(network):
+    """Converts a network to a chromosome.
+
+    Args:
+        network (list): list of RSU composing the network.
+
+    Returns:
+        list: chromosome of the individual.
+    """
     # get the list of RSU from the chromosome
     rsus = [rsu for rsu in network]
     # get the list of ES from the chromosome
@@ -123,6 +137,14 @@ def chromosome_to_network(chromosome):
 
 
 def fitness(network):
+    """Computes the fitness of the individual.
+
+    Args:
+        network (list): list of RSU.
+
+    Returns:
+        list: fitness of the individual.
+    """
     # get all instances of the Task class
     tasks_bank = Task.global_task
 
@@ -144,7 +166,7 @@ def reset_history(network, tasks_bank):
 
     Args:
         network (list): list of RSU.
-        tasks_bank (list): list of Task.
+        tasks_bank (list): list of Tasks.
     """
     # reset the tasks
     for task in tasks_bank:
@@ -199,6 +221,14 @@ def crossing(parent_1: Individual, parent_2: Individual) -> tuple:
 
 
 def mutation(individual: Individual) -> Individual:
+    """Mutates an individual.
+
+    Args:
+        individual (Individual): individual to be mutated.
+
+    Returns:
+        Individual: mutated individual.
+    """
     # get the chromosome of the individual
     chromosome = individual.chromosome.copy()
 

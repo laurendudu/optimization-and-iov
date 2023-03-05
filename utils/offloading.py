@@ -12,9 +12,20 @@ from .main import (
 
 
 def task_offloading(
-    tasks_bank,
-    network,
-):
+    tasks_bank: list,
+    network: list,
+) -> list:
+    """Offloading process of the tasks.
+    The tasks are offloaded to the closest RSU to them, which has not been visited before.
+    In the end, the tasks have a history of computation times and migration times.
+
+    Args:
+        tasks_bank (list): list of tasks.
+        network (list): list of RSUs.
+
+    Returns:
+        list: list of tasks with their history.
+    """
     current_time = 0
 
     # while there are still tasks to be completed
