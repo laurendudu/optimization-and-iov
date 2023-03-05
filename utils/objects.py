@@ -3,6 +3,8 @@ import numpy as np
 
 
 class RSU:
+    global_rsu = []
+
     def __init__(
         self,
         ID,
@@ -17,9 +19,12 @@ class RSU:
         self.STATE = "IDLE"
         self.END_TIME = None
         self.ES = None
+        self.__class__.global_rsu.append(self)
 
 
 class ES:
+    global_es = []
+
     def __init__(
         self,
         ID,
@@ -29,9 +34,12 @@ class ES:
         self.ID = ID
         self.VM_NB = VM_NB
         self.VM_CP = VM_CP
+        self.__class__.global_es.append(self)
 
 
 class Task:
+    global_task = []
+
     def __init__(
         self,
         ID,
@@ -52,6 +60,7 @@ class Task:
         self.COMPUTATION_HISTORY = 0
         self.MIGRATION_TIME = 0
         self.RSU_HISTORY = []
+        self.__class__.global_task.append(self)
 
 
 def populate_tasks(data: pd.DataFrame) -> list:
@@ -138,5 +147,22 @@ def get_network(rsu: list, es: list) -> dict:
 
     # shuffle the RSU list again
     np.random.shuffle(rsu_list)
+
+    return rsu_list
+
+
+def get_full_network(rsu_list: list, es_list: list) -> dict:
+    # shuffle the RSU list and the ES list
+    np.random.shuffle(rsu_list)
+    np.random.shuffle(es_list)
+
+    # for each es, choose an rsu to connect to
+    for i, es in enumerate(es_list):
+        rsu_list[i].ES = es
+
+    # for each rsu, if ES is None, set it to 'AP'
+    for rsu in rsu_list:
+        if rsu.ES is None:
+            rsu.ES = "AP"
 
     return rsu_list
