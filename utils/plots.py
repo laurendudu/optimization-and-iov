@@ -22,11 +22,12 @@ def plot_network(network: list, tasks: list):
 
     # plot the network
     for rsu in network:
-        plt.scatter(rsu.X, rsu.Y, color="orange", s=50)
         if rsu.ES == "AP":
             plt.text(rsu.X, rsu.Y, rsu.ES, fontsize=10)
+            plt.scatter(rsu.X, rsu.Y, color="orange", s=50)
         else:
             plt.text(rsu.X, rsu.Y, "ES", fontsize=10)
+            plt.scatter(rsu.X, rsu.Y, color="green", s=50)
 
     # title the plot
     plt.title("Representation of the network")
