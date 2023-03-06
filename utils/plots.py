@@ -6,11 +6,11 @@ def plot_network(network: list, tasks: list):
     # make the plot bigger
     plt.figure(figsize=(6, 6))
 
-    # make the background light green
-    plt.gca().set_facecolor("lightgreen")
-
     # add a grid at the background
     plt.grid(color="white", linestyle="-", linewidth=1)
+
+    # set the background color
+    plt.gca().set_facecolor("#d9ead3")
 
     # label the axes
     plt.xlabel("X")
@@ -18,15 +18,15 @@ def plot_network(network: list, tasks: list):
 
     # plot the tasks
     for task in tasks:
-        plt.scatter(task.x, task.y, color="purple", s=10)
+        plt.scatter(task.X, task.Y, color="purple", s=10)
 
     # plot the network
     for rsu in network:
-        plt.scatter(rsu.x, rsu.y, color="orange", s=20)
+        plt.scatter(rsu.X, rsu.Y, color="orange", s=50)
         if rsu.ES == "AP":
-            plt.text(rsu.x, rsu.y, rsu.ES, fontsize=10)
+            plt.text(rsu.X, rsu.Y, rsu.ES, fontsize=10)
         else:
-            plt.text(rsu.x, rsu.y, "ES", fontsize=10)
+            plt.text(rsu.X, rsu.Y, "ES", fontsize=10)
 
     # title the plot
     plt.title("Representation of the network")
