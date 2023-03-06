@@ -2,56 +2,67 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def plot_network(network: pd.DataFrame) -> plt.show():
+def plot_network(network: list, tasks: list):
+    # make the plot bigger
+    plt.figure(figsize=(6, 6))
 
-    # plot all the RSU in the network dataframe
-    fig, ax = plt.subplots(figsize=(9, 7))
+    # add a grid at the background
+    plt.grid(color="white", linestyle="-", linewidth=1)
 
-    # set the background light green
-    ax.set_facecolor("#d3f0d3")
+    # set the background color
+    plt.gca().set_facecolor("#d9ead3")
 
-    # make the colour of the points depend on the number of ES_VM_CP and add a colourbar
-    sc = ax.scatter(
-        network["RSU_X"],
-        network["RSU_Y"],
-        s=(network["ES_VM_NB"] + 1)
-        * 100,  # we add one to plot the points even if there is no ES
-        c=network["ES_VM_CP"],
-        cmap="plasma",
-    )
+    # label the axes
+    plt.xlabel("X")
+    plt.ylabel("Y")
 
-    # add a title
-    ax.set_title("RSUs from the generated network", size=15)
+    # plot the tasks
+    for task in tasks:
+        plt.scatter(task.X, task.Y, color="purple", s=10)
 
-    # set the title of the colorbar
-    plt.colorbar(sc).set_label("Edge Server Computing Power (MIPS)")
+    # plot the network
+    for rsu in network:
+        plt.scatter(rsu.X, rsu.Y, color="orange", s=50)
+        if rsu.ES == "AP":
+            plt.text(rsu.X, rsu.Y, rsu.ES, fontsize=10)
+        else:
+            plt.text(rsu.X, rsu.Y, "ES", fontsize=10)
+
+    # title the plot
+    plt.title("Representation of the network")
 
     return plt.show()
 
 
-def plot_rsu_ids(network: pd.DataFrame, ids: list) -> plt.show():
+def plot_pareto(
+    population,
+    POPULATION_SIZE,
+    MAX_GENERATIONS,
+    TOURNAMENT_SIZE,
+    CROSSOVER_PROBABILITY,
+    MUTATION_PROBABILITY,
+):
+    # make the plot bigger
+    plt.figure(figsize=(5, 5))
 
-    fig, ax = plt.subplots(figsize=(9, 7))
+    # plot the fitness values of the final population
+    # change the color for each rank value
+    for individual in population:
+        if individual.rank != 1:
+            plt.scatter(individual.fitness[0], individual.fitness[1], color="orange")
 
-    # set the background light green
-    ax.set_facecolor("#d3f0d3")
+    for individual in population:
+        if individual.rank == 1:
+            plt.scatter(individual.fitness[0], individual.fitness[1], color="green")
 
-    # make the colour of the points depend on the number of ES_VM_CP and add a colourbar
-    sc = ax.scatter(
-        network["RSU_X"],
-        network["RSU_Y"],
-        c=network["ES_VM_CP"],
-        cmap="plasma",
+    # label the axes
+    plt.xlabel("Max Computation Time")
+    plt.ylabel("Max Migration Time")
+
+    # title the plot
+    plt.title(
+        f"Pareto front with:\nPOPULATION={POPULATION_SIZE}, GENERATIONS={MAX_GENERATIONS}, TOURNAMENT={TOURNAMENT_SIZE}\nCROSSOVER={CROSSOVER_PROBABILITY}, MUTATION={MUTATION_PROBABILITY}"
     )
 
-    # add a title
-    ax.set_title("RSUs from the generated network", size=15)
-
-    # set the title of the colorbar
-    plt.colorbar(sc).set_label("Edge Server Computing Power (MIPS)")
-    # add the ids of the RSUs as labels if they are 95 or 37
-    for i, txt in enumerate(network["RSU_ID"]):
-        if txt in ids:
-            ax.annotate(txt, (network["RSU_X"][i], network["RSU_Y"][i]))
-
+    # show the plot
     return plt.show()
