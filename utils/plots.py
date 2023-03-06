@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from utils.nsgaii import chromosome_to_network
+
 
 def plot_network(network: list, tasks: list):
     # make the plot bigger
@@ -31,6 +33,42 @@ def plot_network(network: list, tasks: list):
 
     # title the plot
     plt.title("Representation of the network")
+
+    return plt.show()
+
+
+def plot_solution(solution, tasks: list):
+
+    network = chromosome_to_network(solution.chromosome)
+
+    # make the plot bigger
+    plt.figure(figsize=(6, 6))
+
+    # add a grid at the background
+    plt.grid(color="white", linestyle="-", linewidth=1)
+
+    # set the background color
+    plt.gca().set_facecolor("#d9ead3")
+
+    # label the axes
+    plt.xlabel("X")
+    plt.ylabel("Y")
+
+    # plot the tasks
+    for task in tasks:
+        plt.scatter(task.X, task.Y, color="purple", s=10)
+
+    # plot the network
+    for rsu in network:
+        if rsu.ES == "AP":
+            plt.text(rsu.X, rsu.Y, rsu.ES, fontsize=10)
+            plt.scatter(rsu.X, rsu.Y, color="orange", s=50)
+        else:
+            plt.text(rsu.X, rsu.Y, "ES", fontsize=10)
+            plt.scatter(rsu.X, rsu.Y, color="green", s=50)
+
+    # title the plot
+    plt.title(f"Representation of the network, fitness={solution.fitness}")
 
     return plt.show()
 
